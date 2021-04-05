@@ -15,7 +15,7 @@ void  Case(int Symbol, int Pr)
 			return;
 		}
 		getTopLStack(&s, &top_num);
-		while (PR[int (top_num)] >= Pr) {					//一直弹出，直到栈顶优先级<Pr
+		while (PR[int(top_num)] >= Pr) {					//一直弹出，直到栈顶优先级<Pr
 			if (top_num == 4) break;				//遇到'('就算了
 			al_change += CH[int(top_num)];
 			popLStack(&s, &top_num);
@@ -58,14 +58,18 @@ int down(int x)
 }
 void change()
 {
-	ElemType  t, num,last_zero=0;
-	int l, k=0;
+	ElemType  num, last_zero = 0;
+	int l, k = 0;
+	long long t;
+	double t1,num1;
 	l = al.length();
 	for (int i = 0; i < l; ++i) {
 		if (JUDGE == 0) return;
 		if (al[i] >= '0' && al[i] <= '9') {						//数字直接弹出
 			t = 1;
+			t1 = 1;
 			num = 0;
+			num1 = 0;
 			while (al[i] <= '9' && al[i] >= '0') {
 				if (al[i] == '0') {									//最后位为0需要特判
 					++last_zero;
@@ -75,12 +79,22 @@ void change()
 				t *= 10;
 				++i;
 			}
-			num=down(num);											//将num左右倒
-			for (int j = 1; j <= last_zero; ++j) num *= 10;
+			if (al[i] == '.') {										//小数
+				++i;
+				while (al[i] <= '9' && al[i] >= '0') {
+					t1 /= 10;
+					num1 += t1 * (al[i]-'0');
+					++i;
+				}
+			}
+			num = down(num);											//将num左右倒
+			if (num!=0) for (int j = 1; j <= last_zero; ++j) num *= 10;
+			num += num1;
 			++k;
 			num_list[k] = num;
 			al_change += '#';									//数字用#代替,具体的数放数组里	
 		}
+		if (i == l) break;
 		switch (al[i])
 		{
 		case '+':
@@ -95,12 +109,6 @@ void change()
 		case '/':
 			Case(3, PR[3]);
 			break;
-		case '×':
-			Case(2, PR[2]);
-			break;
-		case '÷':
-			Case(3, PR[3]);
-			break;
 		case '(':
 			Case(4, PR[4]);
 			break;
@@ -110,6 +118,8 @@ void change()
 		case' ':
 			continue;
 		default:
+			cout << "你的输入有问题，请检查";
+			JUDGE = 0;
 			break;
 		}
 	}
@@ -124,9 +134,9 @@ void OUT()
 	destroyLStack(&s);
 	initLStack(&s);
 	ElemType l = al_change.length(), a1, a2;
-	int k=0;
+	int k = 0;
 	for (int i = 0; i < l; ++i) {
-		if (al_change[i] =='#') {
+		if (al_change[i] == '#') {
 			++k;
 			pushLStack(&s, num_list[k]);					//把数字扔进去
 		}
@@ -140,15 +150,17 @@ void OUT()
 		}
 	}
 	popLStack(&s, &a1);
-	cout << a1 << endl;
+	cout << "答案为"<<endl;
+	cout << a1 << endl<<endl;
 }
 int main()
 {
 	s.top = NULL;
 	initLStack(&s);
-	cout << "请输入运算表达式" << endl;
+	cout << "请输入运算表达式,请不要有空格或+-*/()以外的符号" << endl;
 	cin >> al;
 	change();
 	if (!JUDGE) return 0;
 	OUT();
+	return 0;
 }
