@@ -32,7 +32,7 @@ void  Case(int Symbol, int Pr)
 	if (Symbol == 5) {
 		getTopLStack(&s, &top_num);
 		while (top_num != 4) {						//'('前，全部弹出
-			if (isEmptyLStack) {
+			if (isEmptyLStack(&s)) {
 				cout << "你的输入有问题，请检查";
 				JUDGE = 0;
 				return;
